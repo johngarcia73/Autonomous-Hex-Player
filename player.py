@@ -247,6 +247,9 @@ class Play(Player):
         # Game phase
         game_phase = self.calculate_game_phase(board)
         
+        blocked_player1 =self.blocked_positions(board, 1)
+        blocked_player2 =self.blocked_positions(board, 2)
+        
         #pressure = self.pressure(board)-----
         
         # Dynamic weights by game phase  there is no midgame xd
@@ -262,13 +265,13 @@ class Play(Player):
             score = (
                 (cost_player_2 - cost_player_1) * path_weight * 2 + 
                 (center_control_1 - center_control_2) * 0.1 +
-                (bridge_score_1 - bridge_score_2) * bridge_weight 
+                (bridge_score_1 - bridge_score_2) * bridge_weight + blocked_player1
             )
         else:
             score = (
                 (cost_player_1 - cost_player_2) * path_weight * 2 +
                 (center_control_2 - center_control_1) * 0.1 +
-                (bridge_score_2 - bridge_score_1) * bridge_weight 
+                (bridge_score_2 - bridge_score_1) * bridge_weight +blocked_player2
             )
         
         
