@@ -256,9 +256,9 @@ class Play(Player):
         if game_phase == 'early':
             bridge_weight = 0.7
             path_weight = 0.3
-        else:  # late
+        else:
             bridge_weight = 0.1
-            path_weight = 0.9
+            path_weight = 100
         
         
         if self.player_id == 1:
