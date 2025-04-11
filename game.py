@@ -1,6 +1,7 @@
 import tkinter as tk
 import math
-from hex_player import HexBoard, Play
+from hex_table import HexBoard
+from player import Play
 
 class HexGameGUI:
     def __init__(self, board_size):
