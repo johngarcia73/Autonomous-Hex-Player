@@ -173,7 +173,7 @@ class HexGameGUI:
     def ai_move(self):
         if self.game_over:
             return
-        move = self.ai_player.play(self.board, 1)
+        move = self.ai_player.play(self.board)
         if move:
             row, col = move
             self.board.place_piece(row, col, self.ai_player.player_id)

@@ -1,5 +1,5 @@
 import heapq
-import time
+#import time
 from functools import lru_cache
 
 class HexBoard:
@@ -101,8 +101,8 @@ class Play(Player):
         self.current_hash = 0  
         self.depth_cache = {} 
         self.move_history = [] 
-        self.start_time = 0
-        self.time_limit = 5
+        #self.start_time = 0
+        #self.time_limit = 5
     
     def init_zobrist(self, size):
         import random
@@ -137,9 +137,9 @@ class Play(Player):
         board.board[i][j] = 0
         self.moves_done -= 1
     
-    def play(self, board: HexBoard, time_limit: float) -> tuple:
-        self.time_limit = time_limit
-        self.start_time = time.time()
+    def play(self, board: HexBoard) -> tuple:
+        #self.time_limit = time_limit
+        #self.start_time = time.time()
         
         if not hasattr(self, 'tt'): self.tt = {}
         
@@ -160,42 +160,32 @@ class Play(Player):
         
         for move in possible_moves:
             
-            if self.time_out(): return best_move if best_move else move
+            #if self.time_out(): return best_move if best_move else move
+        
+            i, j = move
             
-            try:
-                i, j = move
+            # For making the first move before minimax
+            self.simulate_move(board, i, j, self.player_id)
+            
+            current_value = self.minimax(
+                board, 
+                depth=max_depth -1,
+                alpha=alpha,
+                beta=beta,
+                maximizing=(self.player_id==2))
+            
+            if self.is_better_value(current_value, best_value):
+                best_value = current_value
+                best_move = move
                 
-                # For making the first move before minimax
-                self.simulate_move(board, i, j, self.player_id)
-                
-                current_value = self.minimax(
-                    board, 
-                    depth=max_depth -1,
-                    alpha=alpha,
-                    beta=beta,
-                    maximizing=(self.player_id==2))
-                
-                if self.is_better_value(current_value, best_value):
-                    best_value = current_value
-                    best_move = move
+                if self.player_id == 1:
+                    alpha = max(alpha, best_value)
+                else:
+                    beta = min(beta, best_value)
                     
-                    if self.player_id == 1:
-                        alpha = max(alpha, best_value)
-                    else:
-                        beta = min(beta, best_value)
-                        
-            except TimeoutError:
-                self.undo_move(board, i, j)
-                return best_move if best_move else move
-            
-            try:
-                self.undo_move(board, i, j)
-                
-                
-                #if self.pruning_condition(alpha, beta):
-                #    break
-            except TimeoutError:
-                return best_move if best_move else move
+            self.undo_move(board, i, j)
+            #if self.pruning_condition(alpha, beta):
+            #    break
             
         # Statistics register
         self.update_game_state(best_move)
@@ -247,7 +237,6 @@ class Play(Player):
         
     def minimax(self, board: HexBoard, depth: int, alpha: float, beta: float, maximizing: bool) -> float:
         
-        if self.time_out(): raise TimeoutError()
         
         state_hash = self.board_hash(board)
         
@@ -276,7 +265,6 @@ class Play(Player):
         player = 1 if maximizing else 2
 
         for move in possible_moves:
-            if self.time_out(): raise TimeoutError()
             i, j = move
             self.place(board, i, j, player)
             value = self.minimax(board, depth-1, alpha, beta, not maximizing)
@@ -299,8 +287,8 @@ class Play(Player):
         
         return best_value
     
-    def time_out(self) -> bool:
-        return (time.time() - self.start_time) >= (self.time_limit - 0.05)  # 50ms to end stuff
+    #def time_out(self) -> bool:
+        #return (time.time() - self.start_time) >= (self.time_limit - 0.05)  # 50ms to end stuff
     
     def evaluate(self, board: HexBoard) -> float:
         # Win condition
