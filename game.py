@@ -173,7 +173,7 @@ class HexGameGUI:
     def ai_move(self):
         if self.game_over:
             return
-        move = self.ai_player.play(self.board)
+        move = self.ai_player.play(self.board, 1)
         if move:
             row, col = move
             self.board.place_piece(row, col, self.ai_player.player_id)
@@ -195,5 +195,5 @@ class HexGameGUI:
         self.choose_starter()
 
 if __name__ == "__main__":
-    game = HexGameGUI(board_size=8)
+    game = HexGameGUI(board_size=11)
     game.window.mainloop()
